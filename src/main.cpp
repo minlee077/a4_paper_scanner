@@ -46,7 +46,7 @@ vector<Point> vertexAlign(vector<Point> vertex);
 
 Mat matrix_inv(Mat m);
 
-
+void enhanceImage(Mat& image);
 
 int main()
 {
@@ -118,6 +118,8 @@ int main()
 	transformMatrix=getPerspectiveMatrix(fvertex, a4Standard); 
 	image = perspectiveTransform(image, transformMatrix, Size(TARGET_WIDTH, TARGET_HEIGHT));
 
+	enhanceImage(image);
+	
 	cout<<"----------------------------------------------"<<endl;
 	cout << "Aligned corner points : " << vertex[0] << ' ' << ' ' << vertex[1] << ' ' << vertex[2] << ' ' << vertex[3] << endl;
 	cout << "----------------------------------------------" << endl;
@@ -130,6 +132,42 @@ int main()
 	cv::waitKey(0);                                          // Wait for a keystroke in the window
 
 	return 0;
+}
+
+void enhanceImage(Mat& image)
+{
+	int width = image.size().width;
+	int height = image.size().height;
+	int avRed = 0;
+	int avGreen = 0;
+	int avBlue = 0;
+
+	for (size_t y = 0; y < height; y++)
+	{
+		for (size_t x = 0; x < width; x++)
+		{
+			uchar red = image.at<Vec3b>(y, x).val[0];
+			uchar green = image.at<Vec3b>(y, x).val[1];
+			uchar blue = image.at<Vec3b>(y, x).val[2];
+
+			avRed += 255 - red;
+			avGreen += 255 - green;
+			avBlue += 255 - blue;
+		}
+	}
+	avRed /= height * width;
+	avGreen /= height * width;
+	avBlue /= height * width;
+
+	for (size_t y = 0; y < height; y++)
+	{
+		for (size_t x = 0; x < width; x++)
+		{
+			image.at<Vec3b>(y, x).val[0] = (image.at<Vec3b>(y, x).val[0] + avRed) > 255 ? 255 : image.at<Vec3b>(y, x).val[0] + avRed;
+			image.at<Vec3b>(y, x).val[1] = (image.at<Vec3b>(y, x).val[1] + avGreen) > 255 ? 255 : image.at<Vec3b>(y, x).val[1] + avGreen;
+			image.at<Vec3b>(y, x).val[2] = (image.at<Vec3b>(y, x).val[2] + avBlue) > 255 ? 255 : image.at<Vec3b>(y, x).val[2] + avBlue;
+		}
+	}
 }
 
 Mat convertRGB2Greyscale(Mat image)
