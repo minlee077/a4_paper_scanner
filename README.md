@@ -10,7 +10,7 @@ All algorithms are implemented as a function form.
 
 ## Core Algorithms
 
-- [Square Tracing Algorithm](http://www.imageprocessingplace.com/downloads_V3/root_downloads/tutorials/contour_tracing_Abeer_George_Ghuneim/square.html) (Edges detection)
+### [Square Tracing Algorithm](http://www.imageprocessingplace.com/downloads_V3/root_downloads/tutorials/contour_tracing_Abeer_George_Ghuneim/square.html) (Edges detection)
 
 ```c
 Point GoLeft(Point p) { return Point(p.y, -p.x); }
@@ -59,9 +59,23 @@ vector<Point> searchContour(Mat image)
 
 ```
 
-- [Ramer Douglas Peucker Algorithm](https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm) (Line simplification)
+### [Ramer Douglas Peucker Algorithm](https://en.wikipedia.org/wiki/Ramer%E2%80%93Douglas%E2%80%93Peucker_algorithm) (Line simplification)
 
 ```c
+double findPerpendicularDistance(Point p,Point p1, Point p2){
+	double result;
+	double slope;
+	double intercept;
+	if (p1.x == p2.x) {
+		result = fabs(p.x - p1.x);
+	}
+	else {
+		slope = (double)(p2.y - p1.y) / (double)(p2.x - p1.x);
+		intercept = (double)p1.y - (slope * p1.x);
+		result = fabs(slope * p.x - (double)p.y + intercept) / sqrt(pow(slope, 2) + 1.0);
+	}
+	return result;
+}
 vector<Point> rdp(vector <Point>v, int epsilon) {
 
 	Point firstPoint = v[0];
@@ -97,7 +111,7 @@ vector<Point> rdp(vector <Point>v, int epsilon) {
 }
 ```
 
-- [Perspective Transformation](https://en.wikipedia.org/wiki/3D_projection#Perspective_projection) (Plane image transformation)
+### [Perspective Transformation](https://en.wikipedia.org/wiki/3D_projection#Perspective_projection) (Plane image transformation)
 
 ```c
 Mat getPerspectiveMatrix(vector<Point2f> src, vector<Point2f> dst)
